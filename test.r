@@ -26,20 +26,36 @@
 
 SafeReplicateRule{
 	writeLine("stdout", "just for test");
+	# looking for user group
+	*condition_q0 = "USER_NAME = '*UserName' and USER_GROUP_NAME not like '*UserName'";
+	msiMakeQuery("USER_NAME, USER_GROUP_NAME, COLL_NAME", *condition_q0, *Query0);
+	msiExecStrCondQuery(*Query0, *QueryOut0);
+	msiGetContInxFromGenQueryOut(*QueryOut0, *ContInx_q0);
+	writeLine("stdout", "ContInx_q0 = *ContInx_q0");
+	*usergroup = "";
+	*Path=""
+	foreach (*QueryOut0){
+		msiGetValByKey(*QueryOut0, "USER_GROUP_NAME", *usergroup);
+		msiGetValByKey(*QueryOut0, "COLL_NAME", *collname);
+		writeLine("stdout", "usergroup = *usergroup   CollectionName = *collname  ");
+	}
+	writeLine("stdout", "usergroup = *usergroup");
 	# looking for resources that file exist in
 	*condition_q = "USER_NAME = '*UserName' and DATA_NAME = '*FileName' and COLL_NAME = '*CollectionName' and RESC_GROUP_NAME = '*ResourceGroup'";
-	msiMakeQuery("RESC_NAME, DATA_SIZE", *condition_q, *Query);
+	msiMakeQuery("RESC_NAME, DATA_SIZE, DATA_REPL_NUM", *condition_q, *Query);
 	msiExecStrCondQuery(*Query, *QueryOut);
 	msiGetContInxFromGenQueryOut(*QueryOut, *ContInx_q);
 	writeLine("stdout", "ContInx_q = *ContInx_q");
 	*file_size = 0;
+	*replica = 0;
 	foreach (*QueryOut){
 		msiGetValByKey(*QueryOut, "RESC_NAME", *currentresourcename);
 		writeLine("stdout", "*currentresourcename contains *FileName");
 		msiGetValByKey(*QueryOut, "DATA_SIZE", *file_size);
+		msiGetValByKey(*QueryOut, "DATA_REPL_NUM", *replica);
 	}
 	*Qs = 0 - int(*file_size);
-	*condition_q2 = "RESC_STATUS = 'up' and RESC_GROUP_NAME = '*ResourceGroup'";
+	*condition_q2 = "RESC_STATUS = 'up' and RESC_TYPE_NAME = 'MSS universal driver' and RESC_GROUP_NAME = '*ResourceGroup'";
 	msiMakeQuery("RESC_NAME", *condition_q2, *Query2);
 	msiExecStrCondQuery(*Query2, *QueryOut2);
 	msiGetContInxFromGenQueryOut(*QueryOut2, *ContInx_q2);
@@ -48,7 +64,7 @@ SafeReplicateRule{
 		msiGetValByKey(*QueryOut2, "RESC_NAME", *currentresourcename);
 		writeLine("stdout", "*currentresourcename is up");
 		# now, we want to check whether this resource is within quota
-		*condition_q3 = "QUOTA_RESC_NAME = '*currentresourcename' and QUOTA_OVER <= '*Qs'";
+		*condition_q3 = "QUOTA_RESC_NAME not like 'UCSDT2' and QUOTA_RESC_NAME = '*currentresourcename' and QUOTA_OVER <= '*Qs' and QUOTA_USER_NAME = '*usergroup'";
 		msiMakeQuery("QUOTA_RESC_NAME", *condition_q3, *Query3);
 		msiExecStrCondQuery(*Query3, *QueryOut3);
 		msiGetContInxFromGenQueryOut(*QueryOut3, *ContInx_q3);
@@ -70,10 +86,29 @@ SafeReplicateRule{
 			if (*containflag==false){
 			   writeLine("stdout", "resource *resourcename does not contain *FileName ... preparing to copy the file into this resource ...");
 			   # Now, we want to copy this resource
-			   *Path = "*CollectionName"++"/"++"*FileName*";
-			   if (errorcode(msiDataObjReplWithOptions(*Path, *resourcename, "irodsAdmin", *Status))<0){
-			      writeLine("stdout", "The file *FileName has been successfully replicated to resource *resourcename");
-			   }
+			   *Path = "*CollectionName"++"/"++"*FileName";
+			   *returnresult = msiDataObjReplWithOptions(*Path, *resourcename, "irods", *Status);
+			   writeLine("stdout", "returnresult = *returnresult");
+			   if (*returnresult >= 0){	
+		   	      writeLine("stdout", "The file *FileName has been successfully replicated to resource *resourcename");
+			      writeLine("stdout", "The file *FileName will be deleted from cache...");
+	                      *condition_q5 = "USER_NAME = '*UserName' and DATA_NAME = '*FileName' and RESC_NAME = 'diskCache'";
+			      msiMakeQuery("RESC_NAME, DATA_NAME, DATA_REPL_NUM", *condition_q5, *Query5);
+			      msiExecStrCondQuery(*Query5, *QueryOut5);
+			      msiGetContInxFromGenQueryOut(*QueryOut5, *ContInx_q5);
+			      writeLine("stdout", "ContInx_q5 = *ContInx_q5");
+			      *replica = 0;
+			      foreach (*QueryOut5){
+			      		msiGetValByKey(*QueryOut5, "DATA_REPL_NUM", *replica);
+					writeLine("stdout", "replNum = *replica")				
+					}
+			      writeLine("stdout", "final replNum = *replica")
+			      msiDataObjUnlink("objPath=*Path++++replNum==*replica", *Status);
+			      }
+			   
+			 else {
+			      writeLine("stdout", "Failed to replicate file *FileName to *resourcename");
+			 }
 
 			}
 
