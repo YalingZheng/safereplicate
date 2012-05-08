@@ -84,7 +84,7 @@ SafeReplicateRule{
 	 	msiGetValByKey(*QueryOut2, "RESC_NAME", *currentresourcename);
 	 	writeLine("stdout", "*currentresourcename is up");
 	 	# now, we want to check whether this resource is within quota and quota user name is the User Group
-	 	*condition_q3 = "QUOTA_RESC_NAME = '*currentresourcename' and QUOTA_OVER <= '*Qs' and QUOTA_USER_NAME = '*usergroup'";
+	 	*condition_q3 = "QUOTA_RESC_NAME not like 'UCSDT2' and QUOTA_RESC_NAME = '*currentresourcename' and QUOTA_OVER <= '*Qs' and QUOTA_USER_NAME = '*usergroup'";
 	 	msiMakeQuery("QUOTA_RESC_NAME", *condition_q3, *Query3);
 	 	msiExecStrCondQuery(*Query3, *QueryOut3);
 	 	msiGetContInxFromGenQueryOut(*QueryOut3, *ContInx_q3);
@@ -109,7 +109,7 @@ SafeReplicateRule{
 	 		   # Now, copy this resource
 	 		   *returnresult = msiDataObjReplWithOptions(*Path, *resourcename, "irods", *Status);
 	 		   writeLine("stdout", "returnresult = *returnresult");
-	 		   if (*returnresult >= 0){	
+	 		   if (*returnresult == 0){	
 	 	   	      writeLine("stdout", "The file *FileName has been successfully replicated to resource *resourcename");
 	 		      writeLine("stdout", "The file *FileName will be deleted from cache...");
 	                      *condition_q5 = "USER_NAME = '*UserName' and DATA_NAME = '*FileName' and RESC_NAME = 'diskCache'";
