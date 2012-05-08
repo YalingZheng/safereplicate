@@ -24,6 +24,9 @@
 
 # e. delete the file from disk cache
 
+# Author: Yaling Zheng
+# Date: May 8th, 2012
+
 SafeReplicateRule{
 	writeLine("stdout", "the parameters values are: UserName= *UserName, CollectionName= *CollectionName, ResourceGroup= *ResourceGroup, FileName= *FileName");
 	# initialize *Path
@@ -40,7 +43,7 @@ SafeReplicateRule{
 		writeLine("stdout", "usergroup = *usergroup");
 	}
 	writeLine("stdout", "usergroup = *usergroup");
-	# looking for resources that file exist in
+	# look for resources that file exist in
 	*condition_q1 = "USER_NAME = '*UserName' and DATA_NAME = '*FileName' and COLL_NAME = '*CollectionName' and RESC_GROUP_NAME = '*ResourceGroup'";
 	msiMakeQuery("RESC_NAME, DATA_SIZE, DATA_REPL_NUM", *condition_q1, *Query1);
 	msiExecStrCondQuery(*Query1, *QueryOut1);
@@ -75,6 +78,7 @@ SafeReplicateRule{
 	 }
 	if (*exit_flag == false) {
 	    *Qs = 0 - int(*file_size);
+	    # Look for resources that in the specified resource group and is up and type is MSS universal driver
 	    *condition_q2 = "RESC_STATUS = 'up' and RESC_TYPE_NAME = 'MSS universal driver' and RESC_GROUP_NAME = '*ResourceGroup'";
 	    msiMakeQuery("RESC_NAME", *condition_q2, *Query2);
 	    msiExecStrCondQuery(*Query2, *QueryOut2);
@@ -83,7 +87,7 @@ SafeReplicateRule{
 	    foreach (*QueryOut2){
 	 	msiGetValByKey(*QueryOut2, "RESC_NAME", *currentresourcename);
 	 	writeLine("stdout", "*currentresourcename is up");
-	 	# now, we want to check whether this resource is within quota and quota user name is the User Group
+	 	# Check whether this resource is within quota and quota user name is the User Group
 	 	*condition_q3 = "QUOTA_RESC_NAME not like 'UCSDT2' and QUOTA_RESC_NAME = '*currentresourcename' and QUOTA_OVER <= '*Qs' and QUOTA_USER_NAME = '*usergroup'";
 	 	msiMakeQuery("QUOTA_RESC_NAME", *condition_q3, *Query3);
 	 	msiExecStrCondQuery(*Query3, *QueryOut3);
@@ -109,7 +113,8 @@ SafeReplicateRule{
 	 		   # Now, copy this resource
 	 		   *returnresult = msiDataObjReplWithOptions(*Path, *resourcename, "irods", *Status);
 	 		   writeLine("stdout", "returnresult = *returnresult");
-	 		   if (*returnresult == 0){	
+	 		   # if *returnresult > 0, there are some error
+			   if (*returnresult == 0){	
 	 	   	      writeLine("stdout", "The file *FileName has been successfully replicated to resource *resourcename");
 	 		      writeLine("stdout", "The file *FileName will be deleted from cache...");
 	                      *condition_q5 = "USER_NAME = '*UserName' and DATA_NAME = '*FileName' and RESC_NAME = 'diskCache'";
