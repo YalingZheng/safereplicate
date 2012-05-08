@@ -57,20 +57,23 @@ SafeReplicateRule{
 		   *file_size = int(*new_file_size);
 		}
 		else{ # compare *file_size with *new_file_size
-		      if (int(*new_file_size)!= *file_size){
+		      if (int(*new_file_size) != *file_size){
 		      	 *fileConsistency = false;
 		      		    }
 		      }
 		*numberResourcesContainFile = *numberResourcesContainFile + 1;
 	}
+	*exit_flag = false;
 	# if no resource contain this file, we exit
-	if (*numberResourcesContainFile==0){
+	if (*numberResourcesContainFile == 0){
 	   writeLine("stdout", "No resource of the resource group *ResourceGroup contain this file *FileName");
+	   *exit_flag = true;  
 	}
-	if (*fileConsistency==false){
+	if (*fileConsistency == false){
 	   writeLine("stdout", "File sizes on different resources are not consistent ... ");
+	   *exit_flag = true;
 	}
-	if ((*numberResourcesContainFile>0) and (*fileConsistency==true)){
+	if (*exit_flag == false){
 	   *Qs = 0 - int(*file_size);
 	   *condition_q2 = "RESC_STATUS = 'up' and RESC_TYPE_NAME = 'MSS universal driver' and RESC_GROUP_NAME = '*ResourceGroup'";
 	   msiMakeQuery("RESC_NAME", *condition_q2, *Query2);
@@ -130,11 +133,11 @@ SafeReplicateRule{
 			   
 			 else {
 			      writeLine("stdout", "Failed to replicate file *FileName to *resourcename");
+			      }
 			 }
 			}
 		}
 	}
-}
 }
 input *UserName="yzheng", *FileName="hello3.txt", *CollectionName="/osg/home/yzheng", *ResourceGroup = "osgSrmGroup"
 output ruleExecOut 
