@@ -8,3 +8,6 @@ git commit --author "Yaling Zheng" -m "replicate file to all resources in a grou
 git push
 
 DONE!
+
+Tanya wanted me to only use two parameters and try to see whether *UserName and *CollectionName can be
+retrieved by *ResourceGroup and *FileName
