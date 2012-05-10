@@ -88,7 +88,7 @@ SafeReplicateRule{
 	 	msiGetValByKey(*QueryOut2, "RESC_NAME", *currentresourcename);
 	 	writeLine("stdout", "*currentresourcename is up");
 	 	# now, we want to check whether this resource is within quota and quota user name is the User Group
-	 	*condition_q3 = "QUOTA_RESC_NAME not like 'UCSDT2' and QUOTA_RESC_NAME = '*currentresourcename' and QUOTA_OVER <= '*Qs' and QUOTA_USER_NAME = '*usergroup'";
+	 	*condition_q3 = "QUOTA_RESC_NAME = '*currentresourcename' and QUOTA_OVER <= '*Qs' and QUOTA_USER_NAME = '*usergroup'";
 	 	msiMakeQuery("QUOTA_RESC_NAME", *condition_q3, *Query3);
 	 	msiExecStrCondQuery(*Query3, *QueryOut3);
 	 	msiGetContInxFromGenQueryOut(*QueryOut3, *ContInx_q3);
