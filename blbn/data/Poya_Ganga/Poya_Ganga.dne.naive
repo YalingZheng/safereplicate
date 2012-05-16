@@ -1,0 +1,621 @@
+// ~->[DNET-1]->~
+
+// File created by ScottS at UNebraska using Netica 4.18 on 09/17/11 at 13:31:27.
+
+bnet Poya_Ganga {
+autoupdate = FALSE;
+comment = "This BN is the product of a hypothetical case study about managing water resources in the Poya \
+	Ganga.\n\n\
+	From: Cain, Jeremy (2001) Planning improvements in natural resources management, Centre for \
+	Ecology and Hydrology. Chapter 5.";
+whenchanged = 1316284287;
+
+node G4 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (high, low);
+	parents = ();
+	title = "Rice Yield";
+	whenchanged = 1316284287;
+	evidence = low;
+	};
+
+node A {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Well Rehabilitation";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node A1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "New Well Drilling";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node A4 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Well Deepening";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node A5 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Rain Water Harvesting";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node D {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (target_met, too_low);
+	parents = (G4);
+	title = "Rural Water Supply";
+	whenchanged = 1316284287;
+	evidence = target_met;
+	};
+
+node F {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Health";
+	whenchanged = 1316284287;
+	evidence = poor;
+	};
+
+node A15 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Rain Water Harvesting";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node G3 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (high, low);
+	parents = (G4);
+	title = "Sustainable Yield";
+	whenchanged = 1316284287;
+	evidence = low;
+	};
+
+node V1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (target_met, too_low);
+	parents = (G4);
+	title = "Rural Water Supply";
+	whenchanged = 1316284287;
+	evidence = too_low;
+	};
+
+node A2 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Fence off-take";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node A6 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Health Education";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node A7 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (yes, no);
+	parents = (G4);
+	probs = 
+		// yes          no            // G4   
+		  (0.6,         0.4,          // high 
+		   0.6,         0.4);         // low  ;
+	title = "Faecal Pollution";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node C {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (current, up_15pc);
+	parents = (G4);
+	title = "River Extraction (WS)";
+	whenchanged = 1316284287;
+	evidence = current;
+	};
+
+node E {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (target_met, too_low);
+	parents = (G4);
+	title = "Urban Water Supply";
+	whenchanged = 1316284287;
+	evidence = too_low;
+	};
+
+node V2 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (target_met, too_low);
+	parents = (G4);
+	title = "Urban Water Supply";
+	whenchanged = 1316284287;
+	evidence = target_met;
+	};
+
+node F1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Health1";
+	whenchanged = 1316284287;
+	evidence = poor;
+	};
+
+node A3 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "New Estate Reservoir";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node A8 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Renovate Estate Reservoir";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node Q {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (sufficient, insufficient);
+	parents = (G4);
+	functable = 
+		                    // G4   
+		  (insufficient,    // high 
+		   insufficient);   // low  ;
+	title = "Estate Storage";
+	whenchanged = 1316284287;
+	evidence = insufficient;
+	};
+
+node A9 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Drip Irrigation";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node B {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (improved, current);
+	parents = (G4);
+	title = "Water Recycling";
+	whenchanged = 1316284287;
+	evidence = current;
+	};
+
+node R {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (down_20pc, current, up_10pc);
+	parents = (G4);
+	title = "River Extraction (Estate)";
+	whenchanged = 1316284287;
+	evidence = down_20pc;
+	};
+
+node A14 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "New Reservoirs";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node G {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (high, low);
+	parents = (G4);
+	title = "Surface Storage";
+	whenchanged = 1316284287;
+	evidence = low;
+	};
+
+node A10 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Farmer Control (Irrig)";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node A13 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Law Enforcement";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node H {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Illegal Extractions";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node J {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Offtake Condition";
+	whenchanged = 1316284287;
+	evidence = good;
+	};
+
+node A11 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Sand Mining Control";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node K {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (current, down_25pc);
+	parents = (G4);
+	title = "Irrigable Area";
+	whenchanged = 1316284287;
+	evidence = current;
+	};
+
+node L {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (up_10pc, current, down_20pc);
+	parents = (G4);
+	title = "River Extraction (Paddy)";
+	whenchanged = 1316284287;
+	evidence = up_10pc;
+	};
+
+node V {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (target_met, too_low);
+	parents = (G4);
+	title = "Temple River Flow";
+	whenchanged = 1316284287;
+	evidence = target_met;
+	};
+
+node B1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (improved, current);
+	parents = (G4);
+	title = "Water Recycling";
+	whenchanged = 1316284287;
+	evidence = improved;
+	};
+
+node R1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (down_10pc, current, up_10pc);
+	parents = (G4);
+	title = "River Extraction (Estate)";
+	whenchanged = 1316284287;
+	evidence = current;
+	};
+
+node U {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Estate Productivity";
+	whenchanged = 1316284287;
+	evidence = poor;
+	};
+
+node Z {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (increase, static);
+	parents = (G4);
+	probs = 
+		// increase     static        // G4   
+		  (0.7,         0.3,          // high 
+		   0.7,         0.3);         // low  ;
+	title = "Unemployment";
+	whenchanged = 1316284287;
+	evidence = static;
+	};
+
+node A17 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Law Enforcement";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node H1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Illegal Extractions";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node J1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Offtake Condition";
+	whenchanged = 1316284287;
+	evidence = poor;
+	};
+
+node A18 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Sand Mining Control";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node K1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (current, down_25pc);
+	parents = (G4);
+	title = "Irrigable Area";
+	whenchanged = 1316284287;
+	evidence = current;
+	};
+
+node L1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (down_10pc, current, up_20pc);
+	parents = (G4);
+	title = "River Extraction (Paddy)";
+	whenchanged = 1316284287;
+	evidence = current;
+	};
+
+node V3 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (target_met, too_low);
+	parents = (G4);
+	title = "Temple River Flow";
+	whenchanged = 1316284287;
+	evidence = too_low;
+	};
+
+node S {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Paddy Demand Met?";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node A16 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Drip Irrigation";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node S1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Paddy Demand Met?";
+	whenchanged = 1316284287;
+	evidence = yes;
+	};
+
+node A12 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (yes, no);
+	parents = (G4);
+	title = "Farmer Control (inputs)";
+	whenchanged = 1316284287;
+	evidence = no;
+	};
+
+node M {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (when_needed, not);
+	parents = (G4);
+	title = "Input Availability";
+	whenchanged = 1316284287;
+	evidence = not;
+	};
+
+node N {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Input Quality";
+	whenchanged = 1316284287;
+	evidence = good;
+	};
+
+node T {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Inputs";
+	whenchanged = 1316284287;
+	evidence = poor;
+	};
+
+node G2 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (high, low);
+	parents = (G4);
+	title = "Rice Yield";
+	whenchanged = 1316284287;
+	evidence = high;
+	};
+
+node U2 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "Estate Productivity";
+	whenchanged = 1316284287;
+	evidence = poor;
+	};
+
+node U1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (good, poor);
+	parents = (G4);
+	title = "River Water Quality";
+	whenchanged = 1316284287;
+	evidence = good;
+	};
+
+node G1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (high, low);
+	parents = (G4);
+	title = "Soil Erosion";
+	whenchanged = 1316284287;
+	evidence = high;
+	};
+
+node Z1 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (increase, static);
+	parents = (G4);
+	title = "Unemployment";
+	whenchanged = 1316284287;
+	evidence = increase;
+	};
+
+node G5 {
+	kind = NATURE;
+	discrete = TRUE;
+	states = (high, low);
+	parents = (G4);
+	title = "Soil Erosion";
+	whenchanged = 1316284287;
+	evidence = low;
+	};
+
+node TITLE1 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = (G4);
+	title = "Resource Management";
+	whenchanged = 1316284287;
+	};
+
+node TITLE3 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = (G4);
+	title = "Copyright 2001 Jeremy Cain ";
+	whenchanged = 1316284287;
+	};
+
+node TITLE2 {
+	kind = CONSTANT;
+	discrete = FALSE;
+	parents = (G4);
+	title = "Edited for style and distributed with permission by Norsys Software Corp.";
+	whenchanged = 1316284287;
+	};
+};

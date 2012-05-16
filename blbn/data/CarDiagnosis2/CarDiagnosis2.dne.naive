@@ -1,0 +1,284 @@
+// ~->[DNET-1]->~
+
+// File created by ScottS at UNebraska using Netica 4.18 on 07/14/11 at 16:41:53.
+
+bnet CarDiagnosis2 {
+autoupdate = FALSE;
+comment = "A simple example belief network for diagnosing why a car won't start, based on spark plugs, \
+	headlights, main fuse, etc. \05nThis example is small and just calls out to be expanded. From \
+	Brent Boerlage.";
+author = "BoerlageB";
+whenchanged = 1310679713;
+
+node ST {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (True, False);
+	parents = ();
+	probs = 
+		// True         False        
+		  (0.8,         0.2);
+	title = "Car starts";
+	whenchanged = 1310679713;
+	evidence = False;
+	};
+
+node AL {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (ST);
+	probs = 
+		// Okay         Faulty        // ST    
+		  (0.997,       0.003000021,  // True  
+		   0.997,       0.003000021); // False ;
+	title = "Alternator";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node CS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (ST);
+	probs = 
+		// Okay         Faulty        // ST    
+		  (0.5,         0.5,          // True  
+		   0.5,         0.5);         // False ;
+	title = "Charging system";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node BA {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	states = (new, old, very_old);
+	levels = (0, 2, 5, INFINITY);
+	parents = (ST);
+	probs = 
+		// new          old          very old      // ST    
+		  (0.4,         0.4,         0.2,          // True  
+		   0.4,         0.4,         0.2);         // False ;
+	title = "Battery age";
+	comment = "New 0-2 yrs, Old 3-5 yrs, Very-old >5 yrs";
+	whenchanged = 1310679713;
+	evidence = new;
+	value = 1.87554;
+	};
+
+node BV {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (strong, weak, dead);
+	parents = (ST);
+	probs = 
+		// strong       weak         dead          // ST    
+		  (0.95,        0.04,        0.01,         // True  
+		   0.95,        0.04,        0.01);        // False ;
+	title = "Battery voltage";
+	whenchanged = 1310679713;
+	evidence = strong;
+	};
+
+node MF {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, blown);
+	parents = (ST);
+	probs = 
+		// okay         blown         // ST    
+		  (0.99,        0.00999999,   // True  
+		   0.99,        0.00999999);  // False ;
+	title = "Main fuse";
+	whenchanged = 1310679713;
+	evidence = okay;
+	};
+
+node DS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (ST);
+	probs = 
+		// Okay         Faulty        // ST    
+		  (0.99,        0.00999999,   // True  
+		   0.99,        0.00999999);  // False ;
+	title = "Distributer";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node PV {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (strong, weak, none);
+	parents = (ST);
+	probs = 
+		// strong       weak         none          // ST    
+		  (0.9,         0.05,        0.05,         // True  
+		   0.9,         0.05,        0.05);        // False ;
+	title = "Voltage at plug";
+	whenchanged = 1310679713;
+	evidence = strong;
+	};
+
+node SM {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (ST);
+	probs = 
+		// Okay         Faulty        // ST    
+		  (0.995,       0.004999995,  // True  
+		   0.995,       0.004999995); // False ;
+	title = "Starter Motor";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node SS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (ST);
+	probs = 
+		// Okay         Faulty        // ST    
+		  (0.98,        0.02,         // True  
+		   0.98,        0.02);        // False ;
+	title = "Starter system";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node HL {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (bright, dim, off);
+	parents = (ST);
+	probs = 
+		// bright       dim          off           // ST    
+		  (0.94,        0.01,        0.05,         // True  
+		   0.94,        0.01,        0.05);        // False ;
+	title = "Headlights";
+	whenchanged = 1310679713;
+	evidence = bright;
+	};
+
+node SP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, too_wide, fouled);
+	parents = (ST);
+	probs = 
+		// okay         too wide     fouled        // ST    
+		  (0.7,         0.1,         0.2,          // True  
+		   0.7,         0.1,         0.2);         // False ;
+	title = "Spark plugs";
+	whenchanged = 1310679713;
+	evidence = okay;
+	};
+
+node SQ {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (good, bad, very_bad);
+	parents = (ST);
+	functable = 
+		                    // ST    
+		  (good,            // True  
+		   good);           // False ;
+	title = "Spark quality";
+	whenchanged = 1310679713;
+	evidence = good;
+	};
+
+node CC {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (True, False);
+	parents = (ST);
+	probs = 
+		// True         False         // ST    
+		  (0.8,         0.2,          // True  
+		   0.8,         0.2);         // False ;
+	title = "Car cranks";
+	whenchanged = 1310679713;
+	evidence = True;
+	};
+
+node TM {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (good, bad, very_bad);
+	parents = (ST);
+	probs = 
+		// good         bad          very bad      // ST    
+		  (0.9,         0.09,        0.01,         // True  
+		   0.9,         0.09,        0.01);        // False ;
+	title = "Spark timing";
+	whenchanged = 1310679713;
+	evidence = good;
+	};
+
+node FS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (ST);
+	probs = 
+		// Okay         Faulty        // ST    
+		  (0.9,         0.1,          // True  
+		   0.9,         0.1);         // False ;
+	title = "Fuel system";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node AF {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (clean, dirty);
+	parents = (ST);
+	probs = 
+		// clean        dirty         // ST    
+		  (0.9,         0.1,          // True  
+		   0.9,         0.1);         // False ;
+	title = "Air filter";
+	whenchanged = 1310679713;
+	evidence = dirty;
+	};
+
+node AS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (ST);
+	probs = 
+		// Okay         Faulty        // ST    
+		  (0.3,         0.7,          // True  
+		   0.3,         0.7);         // False ;
+	title = "Air system";
+	whenchanged = 1310679713;
+	evidence = Faulty;
+	};
+};

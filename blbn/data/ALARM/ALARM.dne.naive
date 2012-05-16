@@ -1,0 +1,602 @@
+// ~->[DNET-1]->~
+
+// File created by ScottS at UNebraska using Netica 4.18 on 10/23/11 at 03:41:19.
+
+bnet ALARM {
+autoupdate = FALSE;
+comment = "Described in Beinlich, Ingo, H. J. Suermondt, R. M. Chavez, and G. F. Cooper (1989) \"The ALARM \
+	monitoring system: A \n\
+	case study with two probabilistic inference techniques for belief networks\" in Proc. of the \
+	Second European Conf. \n\
+	on Artificial Intelligence in Medicine (London, Aug.), 38, 247-256.  Also Tech. Report KSL-88-84, \
+	Knowledge Systems \n\
+	Laboratory, Medical Computer Science, Stanford Univ., CA.\n\n\
+	ALARM (A Logical Alarm Reduction Mechanism) is a diagnostic application used to explore \
+	probabilistic\n\
+	reasoning techniques in belief networks.  ALARM implements an alarm message system for patient \
+	monitoring; it \n\
+	calculates probabilities for a differential diagnosis based on available evidence.  The medical \
+	knowledge is encoded\n\
+	in a graphical structure connecting 8 diagnoses, 16 finding and 13 intermediate variables.  Two \
+	algorithms were\n\
+	applied to this belief network: (1) a message-passing algorithm by Pearl for probability updating \
+	in multiple\n\
+	connected networks using the method of conditioning; and (2) the Lauritzen-Spiegelhalter \
+	algorithm for local\n\
+	probability computations on graphical structures.  \n\n\
+	Three types of variables are represented in ALARM.  Diagnoses and other qualitative information \
+	are at the top\n\
+	level of the network.  These variables have no predecessors and they are assumed to be mutually \
+	independent a priori. \n\
+	All nodes are associated with a set of mutually exclusive and exhaustive values representing the \
+	presence or absence \n\
+	or the severity of a particular disease.  Measurements represent any available quantitative \
+	information.  All continuous\n\
+	variables are represented categorically with sets of discrete intervals dividing the value range. \
+	Depending on the \n\
+	necessary level of detail, three to five categories are used per node.  Intermediate variables \
+	are inferred entities\n\
+	that cannot be measured directly.\n\n\
+	The probabilities in a belief network can represent objective as well as subjective knowledge.  \
+	ALARM contains \n\
+	statistical data on prior probabilities, logical conditional probabilities computed from \
+	equations relating\n\
+	variables, and a number of subjective assessments.  It is necessary to obtain conditional \
+	probabilities for the states \n\
+	of a node, given all different states of the parent nodes.\n\n\
+	";
+
+node Press {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = ();
+	probs = 
+		// zero         low          normal       high         
+		  (0.97,        0.01,        0.01,        0.01);
+	title = "Breathing Pressure";
+	};
+
+node Hypovolemia {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.2,         0.8,          // zero   
+		   0.2,         0.8,          // low    
+		   0.2,         0.8,          // normal 
+		   0.2,         0.8);         // high   ;
+	title = "Hypovolemia";
+	};
+
+node LVFailure {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.05,        0.95,         // zero   
+		   0.05,        0.95,         // low    
+		   0.05,        0.95,         // normal 
+		   0.05,        0.95);        // high   ;
+	title = "Left Ventricular Failure";
+	};
+
+node LVEDVolume {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.95,        0.04,        0.01,         // zero   
+		   0.95,        0.04,        0.01,         // low    
+		   0.95,        0.04,        0.01,         // normal 
+		   0.95,        0.04,        0.01);        // high   ;
+	title = "Left Ventricular End-diastolic Vol";
+	};
+
+node StrokeVolume {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.98,        0.01,        0.01,         // zero   
+		   0.98,        0.01,        0.01,         // low    
+		   0.98,        0.01,        0.01,         // normal 
+		   0.98,        0.01,        0.01);        // high   ;
+	title = "Stroke Volume";
+	};
+
+node CVP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.95,        0.04,        0.01,         // zero   
+		   0.95,        0.04,        0.01,         // low    
+		   0.95,        0.04,        0.01,         // normal 
+		   0.95,        0.04,        0.01);        // high   ;
+	title = "Central Venous Pressure";
+	};
+
+node PCWP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.95,        0.04,        0.01,         // zero   
+		   0.95,        0.04,        0.01,         // low    
+		   0.95,        0.04,        0.01,         // normal 
+		   0.95,        0.04,        0.01);        // high   ;
+	title = "PC Wedge Pressure";
+	};
+
+node InsuffAnesth {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.2,         0.8,          // zero   
+		   0.2,         0.8,          // low    
+		   0.2,         0.8,          // normal 
+		   0.2,         0.8);         // high   ;
+	title = "Insufficient Anesthesia";
+	};
+
+node PulmEmbolus {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.01,        0.99,         // zero   
+		   0.01,        0.99,         // low    
+		   0.01,        0.99,         // normal 
+		   0.01,        0.99);        // high   ;
+	title = "Pulmary Embolus";
+	};
+
+node Intubation {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (normal, esophageal, one_sided);
+	parents = (Press);
+	probs = 
+		// normal       esophageal   one sided     // Press  
+		  (0.92,        0.03,        0.05,         // zero   
+		   0.92,        0.03,        0.05,         // low    
+		   0.92,        0.03,        0.05,         // normal 
+		   0.92,        0.03,        0.05);        // high   ;
+	title = "Intubation";
+	};
+
+node Shunt {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (normal, high);
+	parents = (Press);
+	probs = 
+		// normal       high          // Press  
+		  (0.1,         0.9,          // zero   
+		   0.1,         0.9,          // low    
+		   0.1,         0.9,          // normal 
+		   0.1,         0.9);         // high   ;
+	title = "Shunt";
+	};
+
+node KinkedTube {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.04,        0.96,         // zero   
+		   0.04,        0.96,         // low    
+		   0.04,        0.96,         // normal 
+		   0.04,        0.96);        // high   ;
+	title = "Kinked Tube";
+	};
+
+node MinVolSet {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.01,        0.98,        0.01,         // zero   
+		   0.01,        0.98,        0.01,         // low    
+		   0.01,        0.98,        0.01,         // normal 
+		   0.01,        0.98,        0.01);        // high   ;
+	title = "MinVolSet";
+	comment = "Minute ventilation?\nMV = Respitory Rate * Tidal Volume";
+	};
+
+node VentMach {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (Press);
+	probs = 
+		// zero         low          normal       high          // Press  
+		  (0.01,        0.97,        0.01,        0.01,         // zero   
+		   0.01,        0.97,        0.01,        0.01,         // low    
+		   0.01,        0.97,        0.01,        0.01,         // normal 
+		   0.01,        0.97,        0.01,        0.01);        // high   ;
+	title = "Vent Machine";
+	};
+
+node Disconnect {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.05,        0.95,         // zero   
+		   0.05,        0.95,         // low    
+		   0.05,        0.95,         // normal 
+		   0.05,        0.95);        // high   ;
+	title = "Disconnection";
+	};
+
+node VentTube {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (Press);
+	probs = 
+		// zero         low          normal       high          // Press  
+		  (0.97,        0.01,        0.01,        0.01,         // zero   
+		   0.97,        0.01,        0.01,        0.01,         // low    
+		   0.97,        0.01,        0.01,        0.01,         // normal 
+		   0.97,        0.01,        0.01,        0.01);        // high   ;
+	title = "Vent Tube";
+	};
+
+node VentLung {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (Press);
+	probs = 
+		// zero         low          normal       high          // Press  
+		  (0.97,        0.01,        0.01,        0.01,         // zero   
+		   0.97,        0.01,        0.01,        0.01,         // low    
+		   0.97,        0.01,        0.01,        0.01,         // normal 
+		   0.97,        0.01,        0.01,        0.01);        // high   ;
+	title = "Vent Lung";
+	};
+
+node VentAlv {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (Press);
+	probs = 
+		// zero         low          normal       high          // Press  
+		  (0.97,        0.01,        0.01,        0.01,         // zero   
+		   0.97,        0.01,        0.01,        0.01,         // low    
+		   0.97,        0.01,        0.01,        0.01,         // normal 
+		   0.97,        0.01,        0.01,        0.01);        // high   ;
+	title = "Vent Alv";
+	};
+
+node FiO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal);
+	parents = (Press);
+	probs = 
+		// low          normal        // Press  
+		  (0.01,        0.99,         // zero   
+		   0.01,        0.99,         // low    
+		   0.01,        0.99,         // normal 
+		   0.01,        0.99);        // high   ;
+	title = "FiO2";
+	};
+
+node PVSat {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.98,        0.01,        0.01,         // zero   
+		   0.98,        0.01,        0.01,         // low    
+		   0.98,        0.01,        0.01,         // normal 
+		   0.98,        0.01,        0.01);        // high   ;
+	title = "PVSat";
+	comment = "PASAT = Pulmonary artery oxygen saturation";
+	};
+
+node SaO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.98,        0.01,        0.01,         // zero   
+		   0.98,        0.01,        0.01,         // low    
+		   0.98,        0.01,        0.01,         // normal 
+		   0.98,        0.01,        0.01);        // high   ;
+	title = "SaO2";
+	};
+
+node Anaphylaxis {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.01,        0.99,         // zero   
+		   0.01,        0.99,         // low    
+		   0.01,        0.99,         // normal 
+		   0.01,        0.99);        // high   ;
+	title = "Anaphylaxis";
+	};
+
+node TPR {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.98,        0.01,        0.01,         // zero   
+		   0.98,        0.01,        0.01,         // low    
+		   0.98,        0.01,        0.01,         // normal 
+		   0.98,        0.01,        0.01);        // high   ;
+	title = "Peripheral Resistance";
+	};
+
+node ArtCO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.01,        0.01,        0.98,         // zero   
+		   0.01,        0.01,        0.98,         // low    
+		   0.01,        0.01,        0.98,         // normal 
+		   0.01,        0.01,        0.98);        // high   ;
+	title = "ArtCO2";
+	};
+
+node Catechol {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (normal, high);
+	parents = (Press);
+	probs = 
+		// normal       high          // Press  
+		  (0.01,        0.99,         // zero   
+		   0.01,        0.99,         // low    
+		   0.01,        0.99,         // normal 
+		   0.01,        0.99);        // high   ;
+	title = "Catecholamine";
+	};
+
+node HR {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.1,         0.89,        0.01,         // zero   
+		   0.1,         0.89,        0.01,         // low    
+		   0.1,         0.89,        0.01,         // normal 
+		   0.1,         0.89,        0.01);        // high   ;
+	title = "Heart Rate";
+	};
+
+node CO {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.98,        0.01,        0.01,         // zero   
+		   0.98,        0.01,        0.01,         // low    
+		   0.98,        0.01,        0.01,         // normal 
+		   0.98,        0.01,        0.01);        // high   ;
+	title = "Cardiac Output";
+	};
+
+node History {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.9,         0.1,          // zero   
+		   0.9,         0.1,          // low    
+		   0.9,         0.1,          // normal 
+		   0.9,         0.1);         // high   ;
+	title = "History";
+	};
+
+node BP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.98,        0.01,        0.01,         // zero   
+		   0.98,        0.01,        0.01,         // low    
+		   0.98,        0.01,        0.01,         // normal 
+		   0.98,        0.01,        0.01);        // high   ;
+	title = "Blood Pressure";
+	};
+
+node ErrCauter {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.1,         0.9,          // zero   
+		   0.1,         0.9,          // low    
+		   0.1,         0.9,          // normal 
+		   0.1,         0.9);         // high   ;
+	title = "Error Cauter";
+	};
+
+node HREKG {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.3333333,   0.3333333,   0.3333333,    // zero   
+		   0.3333333,   0.3333333,   0.3333333,    // low    
+		   0.3333333,   0.3333333,   0.3333333,    // normal 
+		   0.3333333,   0.3333333,   0.3333333);   // high   ;
+	title = "HREKG";
+	};
+
+node HRSat {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.3333333,   0.3333333,   0.3333333,    // zero   
+		   0.3333333,   0.3333333,   0.3333333,    // low    
+		   0.3333333,   0.3333333,   0.3333333,    // normal 
+		   0.3333333,   0.3333333,   0.3333333);   // high   ;
+	title = "HRSat";
+	};
+
+node ErrLowOutput {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (true, false);
+	parents = (Press);
+	probs = 
+		// true         false         // Press  
+		  (0.05,        0.95,         // zero   
+		   0.05,        0.95,         // low    
+		   0.05,        0.95,         // normal 
+		   0.05,        0.95);        // high   ;
+	title = "Error Low Ouput";
+	};
+
+node HRBP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.98,        0.01,        0.01,         // zero   
+		   0.98,        0.01,        0.01,         // low    
+		   0.98,        0.01,        0.01,         // normal 
+		   0.98,        0.01,        0.01);        // high   ;
+	title = "HRBP";
+	};
+
+node ExpCO2 {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (Press);
+	probs = 
+		// zero         low          normal       high          // Press  
+		  (0.97,        0.01,        0.01,        0.01,         // zero   
+		   0.97,        0.01,        0.01,        0.01,         // low    
+		   0.97,        0.01,        0.01,        0.01,         // normal 
+		   0.97,        0.01,        0.01,        0.01);        // high   ;
+	title = "ExpCO2";
+	};
+
+node PAP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (low, normal, high);
+	parents = (Press);
+	probs = 
+		// low          normal       high          // Press  
+		  (0.01,        0.19,        0.8,          // zero   
+		   0.01,        0.19,        0.8,          // low    
+		   0.01,        0.19,        0.8,          // normal 
+		   0.01,        0.19,        0.8);         // high   ;
+	title = "Pulmonary Pressure";
+	};
+
+node MinVol {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (zero, low, normal, high);
+	parents = (Press);
+	probs = 
+		// zero         low          normal       high          // Press  
+		  (0.97,        0.01,        0.01,        0.01,         // zero   
+		   0.97,        0.01,        0.01,        0.01,         // low    
+		   0.97,        0.01,        0.01,        0.01,         // normal 
+		   0.97,        0.01,        0.01,        0.01);        // high   ;
+	title = "MinVol";
+	};
+};

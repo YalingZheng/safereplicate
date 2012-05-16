@@ -1,0 +1,379 @@
+// ~->[DNET-1]->~
+
+// File created by ScottS at UNebraska using Netica 4.18 on 07/14/11 at 16:41:53.
+
+bnet CarDiagnosis2 {
+autoupdate = FALSE;
+comment = "A simple example belief network for diagnosing why a car won't start, based on spark plugs, \
+	headlights, main fuse, etc. \05nThis example is small and just calls out to be expanded. From \
+	Brent Boerlage.";
+author = "BoerlageB";
+whenchanged = 1310679713;
+
+node AL {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = ();
+	probs = 
+		// Okay         Faulty       
+		  (0.997,       0.003000021);
+	title = "Alternator";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node CS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (AL);
+	probs = 
+		// Okay         Faulty        // AL     
+		  (0.5,         0.5,          // Okay   
+		   0,           1);           // Faulty ;
+	title = "Charging system";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node BA {
+	kind = NATURE;
+	discrete = FALSE;
+	chance = CHANCE;
+	states = (new, old, very_old);
+	levels = (0, 2, 5, INFINITY);
+	parents = ();
+	probs = 
+		// new          old          very old     
+		  (0.4,         0.4,         0.2);
+	title = "Battery age";
+	comment = "New 0-2 yrs, Old 3-5 yrs, Very-old >5 yrs";
+	whenchanged = 1310679713;
+	evidence = new;
+	value = 1.87554;
+	};
+
+node BV {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (strong, weak, dead);
+	parents = (CS, BA);
+	probs = 
+		// strong       weak         dead          // CS     BA       
+		  (0.95,        0.04,        0.01,         // Okay   new      
+		   0.8,         0.15,        0.05,         // Okay   old      
+		   0.6,         0.3,         0.1,          // Okay   very old 
+		   0.008,       0.3,         0.692,        // Faulty new      
+		   0.004,       0.2,         0.796,        // Faulty old      
+		   0.002,       0.1,         0.898);       // Faulty very old ;
+	title = "Battery voltage";
+	whenchanged = 1310679713;
+	evidence = strong;
+	};
+
+node MF {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, blown);
+	parents = ();
+	probs = 
+		// okay         blown        
+		  (0.99,        0.00999999);
+	title = "Main fuse";
+	whenchanged = 1310679713;
+	evidence = okay;
+	};
+
+node DS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = ();
+	probs = 
+		// Okay         Faulty       
+		  (0.99,        0.00999999);
+	title = "Distributer";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node PV {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (strong, weak, none);
+	parents = (MF, DS, BV);
+	probs = 
+		// strong       weak         none          // MF    DS     BV     
+		  (0.9,         0.05,        0.05,         // okay  Okay   strong 
+		   0,           0.9,         0.1,          // okay  Okay   weak   
+		   0,           0,           1,            // okay  Okay   dead   
+		   0.1,         0.1,         0.8,          // okay  Faulty strong 
+		   0,           0.1,         0.9,          // okay  Faulty weak   
+		   0,           0,           1,            // okay  Faulty dead   
+		   0,           0,           1,            // blown Okay   strong 
+		   0,           0,           1,            // blown Okay   weak   
+		   0,           0,           1,            // blown Okay   dead   
+		   0,           0,           1,            // blown Faulty strong 
+		   0,           0,           1,            // blown Faulty weak   
+		   0,           0,           1);           // blown Faulty dead   ;
+	title = "Voltage at plug";
+	whenchanged = 1310679713;
+	evidence = strong;
+	};
+
+node SM {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = ();
+	probs = 
+		// Okay         Faulty       
+		  (0.995,       0.004999995);
+	title = "Starter Motor";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node SS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (MF, SM, BV);
+	probs = 
+		// Okay         Faulty        // MF    SM     BV     
+		  (0.98,        0.02,         // okay  Okay   strong 
+		   0.9,         0.1,          // okay  Okay   weak   
+		   0.1,         0.9,          // okay  Okay   dead   
+		   0.02,        0.98,         // okay  Faulty strong 
+		   0.01,        0.99,         // okay  Faulty weak   
+		   0.005,       0.995,        // okay  Faulty dead   
+		   0,           1,            // blown Okay   strong 
+		   0,           1,            // blown Okay   weak   
+		   0,           1,            // blown Okay   dead   
+		   0,           1,            // blown Faulty strong 
+		   0,           1,            // blown Faulty weak   
+		   0,           1);           // blown Faulty dead   ;
+	title = "Starter system";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node HL {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (bright, dim, off);
+	parents = (BV);
+	probs = 
+		// bright       dim          off           // BV     
+		  (0.94,        0.01,        0.05,         // strong 
+		   0,           0.95,        0.05,         // weak   
+		   0,           0,           1);           // dead   ;
+	title = "Headlights";
+	whenchanged = 1310679713;
+	evidence = bright;
+	};
+
+node SP {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (okay, too_wide, fouled);
+	parents = ();
+	probs = 
+		// okay         too wide     fouled       
+		  (0.7,         0.1,         0.2);
+	title = "Spark plugs";
+	whenchanged = 1310679713;
+	evidence = okay;
+	};
+
+node SQ {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (good, bad, very_bad);
+	parents = (SP, PV);
+	functable = 
+		                    // SP       PV     
+		  (good,            // okay     strong 
+		   bad,             // okay     weak   
+		   very_bad,        // okay     none   
+		   bad,             // too wide strong 
+		   very_bad,        // too wide weak   
+		   very_bad,        // too wide none   
+		   bad,             // fouled   strong 
+		   very_bad,        // fouled   weak   
+		   very_bad);       // fouled   none   ;
+	title = "Spark quality";
+	whenchanged = 1310679713;
+	evidence = good;
+	};
+
+node CC {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (True, False);
+	parents = (SS);
+	probs = 
+		// True         False         // SS     
+		  (0.8,         0.2,          // Okay   
+		   0.05,        0.95);        // Faulty ;
+	title = "Car cranks";
+	whenchanged = 1310679713;
+	evidence = True;
+	};
+
+node TM {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (good, bad, very_bad);
+	parents = (DS);
+	probs = 
+		// good         bad          very bad      // DS     
+		  (0.9,         0.09,        0.01,         // Okay   
+		   0.2,         0.3,         0.5);         // Faulty ;
+	title = "Spark timing";
+	whenchanged = 1310679713;
+	evidence = good;
+	};
+
+node FS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = ();
+	probs = 
+		// Okay         Faulty       
+		  (0.9,         0.1);
+	title = "Fuel system";
+	whenchanged = 1310679713;
+	evidence = Okay;
+	};
+
+node AF {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (clean, dirty);
+	parents = ();
+	probs = 
+		// clean        dirty        
+		  (0.9,         0.1);
+	title = "Air filter";
+	whenchanged = 1310679713;
+	evidence = dirty;
+	};
+
+node AS {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (Okay, Faulty);
+	parents = (AF);
+	probs = 
+		// Okay         Faulty        // AF    
+		  (0.9,         0.1,          // clean 
+		   0.3,         0.7);         // dirty ;
+	title = "Air system";
+	whenchanged = 1310679713;
+	evidence = Faulty;
+	};
+
+node ST {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (True, False);
+	parents = (CC, FS, SQ, AS, TM);
+	probs = 
+		// True         False         // CC    FS     SQ       AS     TM       
+		  (0.99,        0.00999999,   // True  Okay   good     Okay   good     
+		   0.98,        0.02,         // True  Okay   good     Okay   bad      
+		   0.7,         0.3,          // True  Okay   good     Okay   very bad 
+		   0.8,         0.2,          // True  Okay   good     Faulty good     
+		   0.75,        0.25,         // True  Okay   good     Faulty bad      
+		   0.6,         0.4,          // True  Okay   good     Faulty very bad 
+		   0.7,         0.3,          // True  Okay   bad      Okay   good     
+		   0.65,        0.35,         // True  Okay   bad      Okay   bad      
+		   0.5,         0.5,          // True  Okay   bad      Okay   very bad 
+		   0.6,         0.4,          // True  Okay   bad      Faulty good     
+		   0.5,         0.5,          // True  Okay   bad      Faulty bad      
+		   0.4,         0.6,          // True  Okay   bad      Faulty very bad 
+		   0,           1,            // True  Okay   very bad Okay   good     
+		   0,           1,            // True  Okay   very bad Okay   bad      
+		   0,           1,            // True  Okay   very bad Okay   very bad 
+		   0,           1,            // True  Okay   very bad Faulty good     
+		   0,           1,            // True  Okay   very bad Faulty bad      
+		   0,           1,            // True  Okay   very bad Faulty very bad 
+		   0.1,         0.9,          // True  Faulty good     Okay   good     
+		   0.05,        0.95,         // True  Faulty good     Okay   bad      
+		   0.02,        0.98,         // True  Faulty good     Okay   very bad 
+		   0.05,        0.95,         // True  Faulty good     Faulty good     
+		   0.02,        0.98,         // True  Faulty good     Faulty bad      
+		   0.01,        0.99,         // True  Faulty good     Faulty very bad 
+		   0.05,        0.95,         // True  Faulty bad      Okay   good     
+		   0.02,        0.98,         // True  Faulty bad      Okay   bad      
+		   0.01,        0.99,         // True  Faulty bad      Okay   very bad 
+		   0.02,        0.98,         // True  Faulty bad      Faulty good     
+		   0.01,        0.99,         // True  Faulty bad      Faulty bad      
+		   0,           1,            // True  Faulty bad      Faulty very bad 
+		   0,           1,            // True  Faulty very bad Okay   good     
+		   0,           1,            // True  Faulty very bad Okay   bad      
+		   0,           1,            // True  Faulty very bad Okay   very bad 
+		   0,           1,            // True  Faulty very bad Faulty good     
+		   0,           1,            // True  Faulty very bad Faulty bad      
+		   0,           1,            // True  Faulty very bad Faulty very bad 
+		   0,           1,            // False Okay   good     Okay   good     
+		   0,           1,            // False Okay   good     Okay   bad      
+		   0,           1,            // False Okay   good     Okay   very bad 
+		   0,           1,            // False Okay   good     Faulty good     
+		   0,           1,            // False Okay   good     Faulty bad      
+		   0,           1,            // False Okay   good     Faulty very bad 
+		   0,           1,            // False Okay   bad      Okay   good     
+		   0,           1,            // False Okay   bad      Okay   bad      
+		   0,           1,            // False Okay   bad      Okay   very bad 
+		   0,           1,            // False Okay   bad      Faulty good     
+		   0,           1,            // False Okay   bad      Faulty bad      
+		   0,           1,            // False Okay   bad      Faulty very bad 
+		   0,           1,            // False Okay   very bad Okay   good     
+		   0,           1,            // False Okay   very bad Okay   bad      
+		   0,           1,            // False Okay   very bad Okay   very bad 
+		   0,           1,            // False Okay   very bad Faulty good     
+		   0,           1,            // False Okay   very bad Faulty bad      
+		   0,           1,            // False Okay   very bad Faulty very bad 
+		   0,           1,            // False Faulty good     Okay   good     
+		   0,           1,            // False Faulty good     Okay   bad      
+		   0,           1,            // False Faulty good     Okay   very bad 
+		   0,           1,            // False Faulty good     Faulty good     
+		   0,           1,            // False Faulty good     Faulty bad      
+		   0,           1,            // False Faulty good     Faulty very bad 
+		   0,           1,            // False Faulty bad      Okay   good     
+		   0,           1,            // False Faulty bad      Okay   bad      
+		   0,           1,            // False Faulty bad      Okay   very bad 
+		   0,           1,            // False Faulty bad      Faulty good     
+		   0,           1,            // False Faulty bad      Faulty bad      
+		   0,           1,            // False Faulty bad      Faulty very bad 
+		   0,           1,            // False Faulty very bad Okay   good     
+		   0,           1,            // False Faulty very bad Okay   bad      
+		   0,           1,            // False Faulty very bad Okay   very bad 
+		   0,           1,            // False Faulty very bad Faulty good     
+		   0,           1,            // False Faulty very bad Faulty bad      
+		   0,           1);           // False Faulty very bad Faulty very bad ;
+	title = "Car starts";
+	whenchanged = 1310679713;
+	evidence = False;
+	};
+};

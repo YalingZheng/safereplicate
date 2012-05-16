@@ -1,0 +1,121 @@
+// ~->[DNET-1]->~
+
+// File created by ScottS at UNebraska using Netica 4.05 on 09/21/10 at 16:54:36.
+
+bnet ChestClinic {
+autoupdate = FALSE;
+whenchanged = 1285106076;
+
+node Bronchitis {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = ();
+	probs = 
+		// present      absent       
+		  (0.3,         0.7);
+	whenchanged = 1285106076;
+	evidence = present;
+	};
+
+node VisitAsia {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (visit, no_visit);
+	parents = (Bronchitis);
+	probs = 
+		// visit        no visit       // Bronchitis 
+		 ((0.01,        0.99),         // present    
+		  (0.01,        0.99));        // absent     ;
+	whenchanged = 1285106076;
+	evidence = no_visit;
+	};
+
+node Tuberculosis {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = (Bronchitis);
+	probs = 
+		// present      absent         // Bronchitis 
+		 ((0.01,        0.99),         // present    
+		  (0.01,        0.99));        // absent     ;
+	whenchanged = 1285106076;
+	evidence = absent;
+	};
+
+node Smoking {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (smoker, nonsmoker);
+	parents = (Bronchitis);
+	probs = 
+		// smoker       nonsmoker      // Bronchitis 
+		 ((0.5,         0.5),          // present    
+		  (0.5,         0.5));         // absent     ;
+	whenchanged = 1285106076;
+	evidence = nonsmoker;
+	};
+
+node Cancer {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = (Bronchitis);
+	probs = 
+		// present      absent         // Bronchitis 
+		 ((0.01,        0.99),         // present    
+		  (0.01,        0.99));        // absent     ;
+	title = "Lung Cancer";
+	whenchanged = 1285106076;
+	evidence = absent;
+	};
+
+node TbOrCa {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	parents = (Bronchitis);
+	functable = 
+		                    // Bronchitis 
+		  (false,           // present    
+		   false);          // absent     ;
+	title = "Tuberculosis or Cancer";
+	whenchanged = 1285106076;
+	evidence = false;
+	};
+
+node XRay {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (abnormal, normal);
+	parents = (Bronchitis);
+	probs = 
+		// abnormal     normal         // Bronchitis 
+		 ((0.05,        0.95),         // present    
+		  (0.05,        0.95));        // absent     ;
+	whenchanged = 1285106076;
+	evidence = normal;
+	};
+
+node Dyspnea {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (present, absent);
+	parents = (Bronchitis);
+	probs = 
+		// present      absent         // Bronchitis 
+		 ((0.8,         0.2),          // present    
+		  (0.8,         0.2));         // absent     ;
+	whenchanged = 1285106076;
+	evidence = present;
+	};
+};

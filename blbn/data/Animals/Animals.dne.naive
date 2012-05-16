@@ -1,0 +1,146 @@
+// ~->[DNET-1]->~
+
+// File created by ScottS at UNebraska using Netica 4.18 on 07/14/11 at 16:45:12.
+
+bnet Animals {
+autoupdate = FALSE;
+comment = "\n\
+	Animal Characteristics          Copyright 1998 Norsys Software Corp.\n\n\
+	With this network you can enter some characteristics of a\n\
+	particular animal, and watch how the probabilities of its other\n\
+	characteristics (and what type of animal it is) change.\n\n\
+	This is just a toy example.  For a real-world application,\n\
+	it would have to be extended to include many animals (or plants,\n\
+	bacteria, etc.), probably all from the same environment, or the\n\
+	same subclass, etc.  Also, the \"Animal\" node should probably have \n\
+	an \"Other\" state.\n\n\
+	The fun part of this network is to extend it to include more\n\
+	animals and more characteristics.  You may need to define other\n\
+	groupings, such as the \"Class\" node, in order to keep things\n\
+	managable.  If you make a great network, send it to Norsys;\n\
+	we would love to include it in our library (with the proper\n\
+	credits).\n\
+	";
+whenchanged = 1310679912;
+
+node Animal {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = CHANCE;
+	states = (monkey, penguin, platypus, robin, turtle);
+	parents = ();
+	probs = 
+		// monkey       penguin      platypus     robin        turtle       
+		  (0.2,         0.2,         0.2,         0.2,         0.2);
+	whenchanged = 1310679912;
+	evidence = platypus;
+	};
+
+node Class {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (bird, mammal, reptile);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (mammal,          // monkey   
+		   mammal,          // penguin  
+		   mammal,          // platypus 
+		   mammal,          // robin    
+		   mammal);         // turtle   ;
+	whenchanged = 1310679912;
+	evidence = mammal;
+	};
+
+node BearsYoungAs {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (live, eggs);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (eggs,            // monkey   
+		   eggs,            // penguin  
+		   eggs,            // platypus 
+		   eggs,            // robin    
+		   eggs);           // turtle   ;
+	title = "Bears Young ";
+	whenchanged = 1310679912;
+	evidence = eggs;
+	};
+
+node Environment {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (air, land, water);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (water,           // monkey   
+		   water,           // penguin  
+		   water,           // platypus 
+		   water,           // robin    
+		   water);          // turtle   ;
+	whenchanged = 1310679912;
+	evidence = water;
+	};
+
+node HasShell {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (false,           // monkey   
+		   false,           // penguin  
+		   false,           // platypus 
+		   false,           // robin    
+		   false);          // turtle   ;
+	title = "Has Shell";
+	whenchanged = 1310679912;
+	evidence = false;
+	};
+
+node BodyCovering {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (fur, feathers, scales);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (fur,             // monkey   
+		   fur,             // penguin  
+		   fur,             // platypus 
+		   fur,             // robin    
+		   fur);            // turtle   ;
+	title = "Body Covering";
+	whenchanged = 1310679912;
+	evidence = fur;
+	};
+
+node WarmBlooded {
+	kind = NATURE;
+	discrete = TRUE;
+	chance = DETERMIN;
+	states = (true, false);
+	parents = (Animal);
+	functable = 
+		                    // Animal   
+		  (true,            // monkey   
+		   true,            // penguin  
+		   true,            // platypus 
+		   true,            // robin    
+		   true);           // turtle   ;
+	title = "Warm Blooded";
+	whenchanged = 1310679912;
+	evidence = true;
+	};
+NodeSet characteristics {Nodes = (Environment, HasShell, BearsYoungAs, Class);};
+NodeSet sub {Nodes = (BodyCovering, WarmBlooded);};
+};
