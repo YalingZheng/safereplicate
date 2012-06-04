@@ -1,0 +1,16 @@
+grid-proxy-init
+kinit yzheng@FNAL.GOV
+added .ssh/config
+git clone ssh://p-osgrods@cdcvs.fnal.gov/cvs/projects/osgrods
+cp ../myrules/safereplicate.r src/rules
+git add src/rules/safereplicate.r
+git commit --author "Yaling Zheng" -m "replicate file to all resources in a group"
+git push
+
+to see this website,
+ https://cdcvs.fnal.gov/redmine/projects/osgrods/repository
+
+DONE!
+
+Tanya wanted me to only use two parameters and try to see whether *UserName and *CollectionName can be
+retrieved by *ResourceGroup and *FileName
